@@ -28,7 +28,8 @@ const quizStore = new Map<string, {
 // Cleanup old quizzes every hour
 setInterval(() => {
   const now = Date.now();
-  for (const [id, quiz] of quizStore.entries()) {
+  const entries = Array.from(quizStore);
+  for (const [id, quiz] of entries) {
     if (now - quiz.createdAt > 60 * 60 * 1000) {
       quizStore.delete(id);
     }
