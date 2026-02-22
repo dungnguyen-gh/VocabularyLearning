@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "migrate": "prisma migrate dev",
@@ -13,8 +13,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "db:up": "docker-compose up -d",
-    "db:down": "docker-compose down",
-    "postinstall": "npx prisma generate"
+    "db:down": "docker-compose down"
   },
   "dependencies": {
     "next": "14.1.0",
