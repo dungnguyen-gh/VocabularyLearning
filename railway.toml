@@ -1,0 +1,6 @@
+[build]
+cbuilder = "NIXPACKS"
+
+[build.nixpacks]
+# Use npm install instead of npm ci
+buildCmd = "npm install && npx prisma generate && npm run build"
