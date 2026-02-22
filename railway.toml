@@ -1,5 +1,9 @@
 [build]
 builder = "NIXPACKS"
 
+[build.nixpacks]
+buildCmd = "npm ci && npx prisma generate && npm run build"
+
 [deploy]
 startCommand = "npm start"
+restartPolicyType = "on_failure"
