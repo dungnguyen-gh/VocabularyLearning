@@ -18,11 +18,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.log('Fetching vocab for:', { topic, difficulty, count });
 
+    // Make topic lowercase for case-insensitive matching
+    const normalizedTopic = topic.toLowerCase().trim();
+    
+    console.log('Searching for:', { normalizedTopic, difficulty, count });
+
     // Use raw query for RANDOM() ordering (PostgreSQL specific)
+    // Use LOWER() for case-insensitive comparison
     const vocab = await prisma.$queryRaw`
       SELECT id, word, ipa, meaning, example, topic, difficulty
       FROM "Vocabulary"
-      WHERE topic = ${topic} AND difficulty = ${difficulty}
+      WHERE LOWER(topic) = ${normalizedTopic} AND difficulty = ${difficulty}
       ORDER BY RANDOM()
       LIMIT ${count}
     `;
