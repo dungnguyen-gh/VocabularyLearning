@@ -14,14 +14,17 @@ const generateSchema = z.object({
   })).min(1).max(20),
 });
 
+// Type for quiz answer key
+type AnswerKeyItem = {
+  vocabId: string;
+  correctAnswer: string;
+  type: 'multiple_choice' | 'fill_blank';
+};
+
 // In-memory store for quiz answer keys (use Redis in production)
 const quizStore = new Map<string, {
   userId: string | null;
-  questions: {
-    vocabId: string;
-    correctAnswer: string;
-    type: 'multiple_choice' | 'fill_blank';
-  }[];
+  questions: AnswerKeyItem[];
   createdAt: number;
 }>();
 
@@ -52,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const allMeanings = allVocab.map(v => v.meaning);
 
     const questions = [];
-    const answerKey = [];
+    const answerKey: AnswerKeyItem[] = [];
 
     for (let i = 0; i < vocab.length; i++) {
       const item = vocab[i];
