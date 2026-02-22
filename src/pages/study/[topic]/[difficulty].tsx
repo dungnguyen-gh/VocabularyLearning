@@ -27,14 +27,24 @@ export default function StudyPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ topic, difficulty, count: 10 }),
     })
-      .then(res => res.json())
+      .then(async res => {
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to load vocabulary');
+        }
+        return data;
+      })
       .then(data => {
-        setVocab(data.vocab);
+        setVocab(data.vocab || []);
         // Store vocab for quiz generation
-        sessionStorage.setItem('currentVocab', JSON.stringify(data.vocab));
+        sessionStorage.setItem('currentVocab', JSON.stringify(data.vocab || []));
         setLoading(false);
       })
-      .catch(console.error);
+      .catch(err => {
+        console.error('Error loading vocab:', err);
+        setVocab([]);
+        setLoading(false);
+      });
   }, [topic, difficulty]);
 
   const handleNext = () => {

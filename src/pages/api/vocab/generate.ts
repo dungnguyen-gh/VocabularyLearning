@@ -16,6 +16,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { topic, difficulty, count } = generateSchema.parse(req.body);
 
+    console.log('Fetching vocab for:', { topic, difficulty, count });
+
     // Use raw query for RANDOM() ordering (PostgreSQL specific)
     const vocab = await prisma.$queryRaw`
       SELECT id, word, ipa, meaning, example, topic, difficulty
@@ -24,6 +26,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ORDER BY RANDOM()
       LIMIT ${count}
     `;
+
+    console.log('Found vocab count:', Array.isArray(vocab) ? vocab.length : 0);
 
     if (!Array.isArray(vocab) || vocab.length === 0) {
       return res.status(404).json({ error: 'No vocabulary found for this topic and difficulty' });
