@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  password     String
+  displayName  String?
+  createdAt    DateTime      @default(now())
+  quizResults  QuizResult[]
+  progress     Progress[]
+}
+
+model Vocabulary {
+  id         String   @id @default(uuid())
+  word       String
+  ipa        String?
+  meaning    String
+  example    String
+  topic      String
+  difficulty String   // easy, medium, hard
+  createdAt  DateTime @default(now())
+
+  @@index([topic, difficulty])
+}
+
+model QuizResult {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  topic      String
+  difficulty String
+  total      Int
+  correct    Int
+  score      Int
+  details    Json     // { questionIndex: number, vocabId: string, correct: boolean, userAnswer: string, correctAnswer: string }[]
+  createdAt  DateTime @default(now())
+}
+
+model Progress {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  topic         String
+  difficulty    String
+  xp            Int      @default(0)
+  streak        Int      @default(0)
+  lastPracticed DateTime @default(now())
+
+  @@unique([userId, topic, difficulty])
+}
